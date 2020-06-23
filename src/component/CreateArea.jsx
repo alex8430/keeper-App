@@ -1,48 +1,65 @@
 import React, { useState } from "react";
+import AddIcon from "@material-ui/icons/Add";
+import Fab from "@material-ui/core/Fab";
+import Zoom from "@material-ui/core/Zoom";
 
 function CreateArea(props) {
-  const [notes, setNotes] = useState([
-    {
-      title: "",
-      content: ""
-    }
-  ]);
+  const [note, setNote] = useState({
+    title: "",
+    content: ""
+  });
+
+  const [isDone, setDone] = useState(false);
   function handleChange(event) {
     const { name, value } = event.target;
-    setNotes(prev => {
+
+    setNote(prevNote => {
       return {
-        ...prev,
+        ...prevNote,
         [name]: value
       };
     });
   }
 
-  function UpdateNote(event) {
-    props.onAddnote(notes);
-    setNotes({
+  function submitNote(event) {
+    props.onAdd(note);
+    setNote({
       title: "",
       content: ""
     });
     event.preventDefault();
   }
 
+  function titleDone() {
+    setDone(true);
+  }
+
   return (
     <div>
-      <form onSubmit={UpdateNote}>
+      <form className="create-note">
         <input
-          onChange={handleChange}
+          onClick={titleDone}
           name="title"
-          placeholder="Title"
-          value={notes.title}
-        />
-        <textarea
           onChange={handleChange}
-          name="content"
-          placeholder="Take a note..."
-          rows="3"
-          value={notes.content}
+          value={note.title}
+          placeholder="Title"
+          autoComplete="off"
         />
-        <button>Add</button>
+        {isDone && (
+          <textarea
+            name="content"
+            onChange={handleChange}
+            value={note.content}
+            placeholder="Take a note..."
+            rows={isDone ? 3 : 1}
+          />
+        )}
+
+        <Zoom in={isDone}>
+          <Fab onClick={submitNote}>
+            <AddIcon />
+          </Fab>
+        </Zoom>
       </form>
     </div>
   );
